@@ -9,11 +9,13 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
+  const router = useRouter(); // useRouter-ийн зөв хэрэглээ
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [medee, setMedee] = useState("");
@@ -41,11 +43,17 @@ export default function LoginScreen() {
       if (data.resultCode === 200) {
         const email = data.action[0].email;
         if (email) {
-          localStorage.setItem("email", email);
-          alert("amjiltta");
-          router.push("/(tabs)");
+          // localStorage → AsyncStorage
+          await AsyncStorage.setItem("email", email);
+          Toast.show({
+            type: "success",
+            text1: "Амжилттай нэвтэрлээ",
+            text2: "Тавтай морилно уу!",
+            position: "top",
+          });
+          router.push("/(tabs)"); // Шилжих
         }
-        await AsyncStorage.setItem("token", "бүртгэлтэй"); // await ашиглан token хадгална
+        await AsyncStorage.setItem("token", "бүртгэлтэй"); // token хадгална
         router.replace("/"); // Шилжих
       } else {
         console.log(data);
@@ -114,6 +122,9 @@ export default function LoginScreen() {
       <TouchableOpacity onPress={() => router.push("/RegisterScreen")}>
         <Text style={styles.registerText}>Бүртгүүлэх</Text>
       </TouchableOpacity>
+
+      {/* Toast элементийг App дээр харагдуулах */}
+      <Toast />
     </View>
   );
 }

@@ -10,6 +10,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
 import { router } from "expo-router";
+import { ActivityIndicator } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
@@ -18,8 +20,6 @@ export default function RegisterScreen() {
   const [repassword, setrePassword] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // Success message state
   const [loading, setLoading] = useState(false);
- 
-
 
   const handleRegister = () => {
     if (repassword !== password) {
@@ -50,7 +50,6 @@ export default function RegisterScreen() {
         setrePassword("");
         const timeout = setTimeout(() => {
           setSuccessMessage("");
-          
         }, 3000);
 
         console.log(data);
@@ -116,16 +115,25 @@ export default function RegisterScreen() {
         </LinearGradient>
       </TouchableOpacity>
 
-      {/*loading*/}
       {loading && (
-        <Text style={styles.loadingMessage}>Бүртгэж байна.......</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#a55eea" />
+          <Text style={styles.loadingText}>Бүртгэж байна...</Text>
+        </View>
       )}
 
       {/* Success message */}
       {successMessage ? (
-        <Text style={styles.successMessage}>{successMessage}</Text> // Display success message
+        <View style={styles.successContainer}>
+          <MaterialIcons
+            name="check-circle"
+            size={20}
+            color="#2d9c59"
+            style={{ marginRight: 8 }}
+          />
+          <Text style={styles.successText}>{successMessage}</Text>
+        </View>
       ) : null}
-
       {/* Login холбоос */}
       <TouchableOpacity onPress={() => router.push("/LoginScreen")}>
         <Text style={styles.registerText}>Нэвтрэх</Text>
@@ -190,9 +198,47 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
   },
-  loadingMessage: {
-    color: "#555",
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 15,
+    backgroundColor: "#f1e7ff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    borderColor: "#caa9ff",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  loadingText: {
+    marginLeft: 10,
     fontSize: 16,
-    marginTop: 10,
+    color: "#7f57c1",
+    fontWeight: "600",
+  },
+  successContainer: {
+    marginTop: 20,
+    backgroundColor: "#e0ffe5",
+    borderColor: "#66d18e",
+    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  successText: {
+    color: "#2d9c59",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
