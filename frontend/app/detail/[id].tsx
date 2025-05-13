@@ -113,29 +113,22 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   imageContainer: {
-    width: screenWidth * 0.3,
-    height: screenWidth * 0.5, // өндөр нь дэлгэцийн өргөнөөс хамааралтай
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-    alignSelf: "center", // Зургийг төвлөрүүлнэ
-    borderRadius: 16, // Зөөлөн булантай болгоно
-    shadowColor: "#000", // Сүүдэр
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
-    elevation: 6, // Android дээр сүүдэр
-  },
+  width: screenWidth, // 100% дэлгэцийн өргөн
+  height: screenWidth * 1.4, // пропорциональ өндөр
+  borderBottomLeftRadius: 20,
+  borderBottomRightRadius: 20,
+  overflow: "hidden",
+  shadowColor: "#000",
+  shadowOpacity: 0.15,
+  shadowOffset: { width: 0, height: 4 },
+  shadowRadius: 8,
+  elevation: 6,
+},
+image: {
+  width: "100%",
+  height: "100%",
+  resizeMode: "cover",
+},
 
   gradient: {
     position: "absolute",
@@ -157,17 +150,19 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   overlayTitle: {
-    position: "absolute",
-    bottom: 23,
-    left: 20,
-    right: 20,
-    fontSize: 26,
-    color: "#ffffff",
-    fontWeight: "bold",
-    textShadowColor: "rgba(0, 0, 0, 0.6)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
-  },
+  position: "absolute",
+  bottom: 23,
+  left: 20,
+  right: 20,
+  fontSize: 24,
+  color: "#ffffff",
+  fontWeight: "bold",
+  textShadowColor: "rgba(10, 10, 10, 0.6)",
+  textShadowOffset: { width: 8, height: 8 },
+  textShadowRadius: 6,
+  lineHeight: 32,
+  flexWrap: "wrap",
+},
   contentContainer: {
     backgroundColor: "#ffffff",
     marginTop: -20, // өмнө нь -12 байсан
