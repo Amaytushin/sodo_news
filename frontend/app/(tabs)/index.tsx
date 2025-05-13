@@ -183,16 +183,16 @@ export default function HomeScreen() {
           ) : (
             <>
               <TouchableOpacity
-                onPress={() => router.push("../add_news")}
-                style={styles.headerButton}
-              >
-                <Text style={styles.headerButtonText}>Мэдээ нэмэх</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
                 onPress={handleLogout}
                 style={styles.headerButton}
               >
                 <Text style={styles.headerButtonText}>Гарах</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("../add_news")}
+                style={styles.headerButton}
+              >
+                <Ionicons name="duplicate-outline" size={31} color="#fff" />
               </TouchableOpacity>
               <TouchableOpacity onPress={toggleProfilePanel}>
                 <Ionicons name="person-circle-outline" size={32} color="white" />
@@ -794,14 +794,14 @@ const styles = StyleSheet.create({
   headerTextContainer: { flex: 1, alignItems: "center" },
   headerText: {
     color: "#fff",
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "bold",
     letterSpacing: 1,
   },
-  infoText: { color: "#e0e0e0", marginTop: 4, fontSize: 13 },
+  infoText: { color: "#e0e0e0", marginTop: 4, fontSize: 14 },
   headerRightContainer: { flexDirection: "column", alignItems: "center", gap: 8 },
   headerButton: {
-    backgroundColor: "#ffffff33",
+    //backgroundColor: "#ffffff33",
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 20,
