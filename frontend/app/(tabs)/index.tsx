@@ -146,8 +146,7 @@ export default function HomeScreen() {
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-      <ScrollView style={styles.container}>
-        <LinearGradient colors={["#9b59b6", "#e056fd"]} style={styles.header}>
+      <LinearGradient colors={["#9b59b6", "#e056fd"]} style={styles.header}>
           <ImageBackground
             source={{
               uri: "https://i.pinimg.com/736x/56/8a/1e/568a1e3f59ef753f658dfd7f6194c798.jpg",
@@ -210,6 +209,8 @@ export default function HomeScreen() {
           </View>
         </LinearGradient>
 
+      <ScrollView style={styles.container}>
+        
         <View style={styles.adContainer}>
           <Animated.View
             style={[styles.adContent, { transform: [{ translateX }] }]}
