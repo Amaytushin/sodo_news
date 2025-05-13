@@ -112,9 +112,9 @@ export default function HomeScreen() {
     }).start(startScrolling);
   };
 
-  const handleRatingChange = (itemId, newRating) => {
+  const handleRatingChange = (nid, newRating) => {
     const updatedItems = items.map((item) => {
-      if (item.id === itemId) {
+      if (item.nid === nid) {
         const updatedRatings = item.ratings
           ? [...item.ratings, newRating]
           : [newRating];
@@ -126,23 +126,23 @@ export default function HomeScreen() {
   };
 
   const toggleProfilePanel = () => {
-  const toValue = isProfileOpen ? width : width * 0.3;
-  setProfileOpen(!isProfileOpen);
+    const toValue = isProfileOpen ? width : width * 0.3;
+    setProfileOpen(!isProfileOpen);
 
-  Animated.parallel([
-    Animated.timing(profilePanelAnim, {
-      toValue,
-      duration: 400,
-      useNativeDriver: false,
-      easing: Easing.out(Easing.poly(4)),
-    }),
-    Animated.timing(panelOpacity, {
-      toValue: isProfileOpen ? 0 : 1,
-      duration: 400,
-      useNativeDriver: true,
-    }),
-  ]).start();
-};
+    Animated.parallel([
+      Animated.timing(profilePanelAnim, {
+        toValue,
+        duration: 400,
+        useNativeDriver: false,
+        easing: Easing.out(Easing.poly(4)),
+      }),
+      Animated.timing(panelOpacity, {
+        toValue: isProfileOpen ? 0 : 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
@@ -195,7 +195,11 @@ export default function HomeScreen() {
                 <Ionicons name="duplicate-outline" size={31} color="#fff" />
               </TouchableOpacity>
               <TouchableOpacity onPress={toggleProfilePanel}>
-                <Ionicons name="person-circle-outline" size={32} color="white" />
+                <Ionicons
+                  name="person-circle-outline"
+                  size={32}
+                  color="white"
+                />
               </TouchableOpacity>
             </>
           )}
@@ -203,36 +207,39 @@ export default function HomeScreen() {
       </LinearGradient>
 
       <Animated.View
-  style={[
-    styles.profilePanel,
-    {
-      right: profilePanelAnim,
-      opacity: panelOpacity,
-      shadowColor: "#000",
-      shadowOffset: { width: -4, height: 0 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-      elevation: 10,
-    },
-  ]}
->
-  <View style={styles.profileContent}>
-    <View style={styles.profileHeader}>
-      <Image
-        source={{
-          uri: "https://i.pinimg.com/originals/98/a7/6a/98a76a7097ebaa46044ca332e1db1c6d.gif",
-        }}
-        style={styles.avatar}
-      />
-      <Text style={styles.profileTitle}>Сайн байна уу</Text>
-    </View>
-    <Text style={styles.profileItem}>👤 Нэр: Хэрэглэгч</Text>
-    <Text style={styles.profileItem}>📧 И-мэйл: user@example.com</Text>
-    <TouchableOpacity style={styles.closeButton} onPress={toggleProfilePanel}>
-      <Text style={styles.closeButtonText}>✖ Хаах</Text>
-    </TouchableOpacity>
-  </View>
-</Animated.View>
+        style={[
+          styles.profilePanel,
+          {
+            right: profilePanelAnim,
+            opacity: panelOpacity,
+            shadowColor: "#000",
+            shadowOffset: { width: -4, height: 0 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 10,
+          },
+        ]}
+      >
+        <View style={styles.profileContent}>
+          <View style={styles.profileHeader}>
+            <Image
+              source={{
+                uri: "https://i.pinimg.com/originals/98/a7/6a/98a76a7097ebaa46044ca332e1db1c6d.gif",
+              }}
+              style={styles.avatar}
+            />
+            <Text style={styles.profileTitle}>Сайн байна уу</Text>
+          </View>
+          <Text style={styles.profileItem}>👤 Нэр: Хэрэглэгч</Text>
+          <Text style={styles.profileItem}>📧 И-мэйл: user@example.com</Text>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={toggleProfilePanel}
+          >
+            <Text style={styles.closeButtonText}>✖ Хаах</Text>
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
 
       <ScrollView style={styles.container}>
         <View style={styles.adContainer}>
@@ -287,7 +294,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -340,7 +347,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -393,7 +400,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -446,7 +453,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -499,7 +506,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -552,7 +559,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -605,7 +612,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -658,7 +665,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -711,7 +718,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -764,7 +771,7 @@ export default function HomeScreen() {
                 <StarRating
                   rating={calculateAverageRating(item.ratings || [])}
                   onRatingChange={(rating) =>
-                    handleRatingChange(item.id, rating)
+                    handleRatingChange(item.nid, rating)
                   }
                 />
                 <Text style={styles.cardRating}>
@@ -799,13 +806,16 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   infoText: { color: "#e0e0e0", marginTop: 4, fontSize: 14 },
-  headerRightContainer: { flexDirection: "column", alignItems: "center", gap: 8 },
+  headerRightContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 8,
+  },
   headerButton: {
     //backgroundColor: "#ffffff33",
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 20,
-    
   },
   headerButtonText: { color: "#fff", fontWeight: "bold", fontSize: 14 },
   adContainer: {
@@ -869,28 +879,28 @@ const styles = StyleSheet.create({
   filledStar: { color: "#f1c40f", fontSize: 18 },
   emptyStar: { color: "#ccc", fontSize: 18 },
   profilePanel: {
-  position: "absolute",
-  top: 0,
-  bottom: 0,
-  width: "70%",
-  zIndex: 999,
-  padding: 20,
-  borderTopLeftRadius: 24,
-  borderBottomLeftRadius: 24,
-  backdropFilter: "blur(10px)", // iOS only; Android дэмжихгүй
-},
-profileHeader: {
-  alignItems: "center",
-  marginBottom: 20,
-},
-avatar: {
-  width: 80,
-  height: 80,
-  borderRadius: 40,
-  marginBottom: 10,
-  borderWidth: 2,
-  borderColor: "#9b59b6",
-},
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    width: "70%",
+    zIndex: 999,
+    padding: 20,
+    borderTopLeftRadius: 24,
+    borderBottomLeftRadius: 24,
+    backdropFilter: "blur(10px)", // iOS only; Android дэмжихгүй
+  },
+  profileHeader: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "#9b59b6",
+  },
   profileContent: { flex: 1 },
   profileTitle: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   profileItem: { fontSize: 16, marginBottom: 10 },
