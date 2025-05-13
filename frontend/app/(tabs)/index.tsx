@@ -10,22 +10,20 @@ import {
   Animated,
   Dimensions,
   Easing,
-  TextInput,
   ImageBackground,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AnimatedView } from "react-native-reanimated/lib/typescript/component/View";
-
 import { useRouter, usePathname } from "expo-router";
-const { width } = Dimensions.get("window"); 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
+const { width } = Dimensions.get("window");
 
 const ad = {
   id: 1,
   image:
     "https://pa1.narvii.com/6328/88107ddc2df7a4c4d0f6fa5d92975b4cabc79673_hq.gif",
-  text: "Тэнгисийн эргийн охид залуучууд хоорондоо секс хийдэг үү? ",
+  text: "Тэнгисийн эргийн охид залуучууд хоорондоо секс хийдэг үү?",
 };
 
 const StarRating = ({ rating, onRatingChange }) => {
@@ -51,22 +49,16 @@ const calculateAverageRating = (ratings) => {
 
 export default function HomeScreen() {
   const [items, setItems] = useState([]);
-  const pathName = usePathname();
-  const [cat, setcat] = useState([]);
+  const [cat, setCat] = useState([]);
   const [usdRate, setUsdRate] = useState("Loading...");
+  const [token, setToken] = useState(null);
+  const [isProfileOpen, setProfileOpen] = useState(false);
   const translateX = useRef(new Animated.Value(width)).current;
-  const [token, setToken] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [result, setRelust] = useState(null);
+  const profilePanelAnim = useRef(new Animated.Value(width)).current;
+  const panelOpacity = useRef(new Animated.Value(0)).current;
   const router = useRouter();
+  const pathName = usePathname();
 
-  // const search = async () => {
-  //   try{
-  //     const response = await fetch ()
-  //   }
-  // }
-
-  console.log(localStorage.getItem("token"));
   useEffect(() => {
     const fetchToken = async () => {
       const t = await AsyncStorage.getItem("token");
@@ -87,7 +79,7 @@ export default function HomeScreen() {
           setItems(data.data);
         }
       })
-      .catch((err) => console.log(err));
+      .catch(console.error);
 
     fetch("http://127.0.0.1:8000/user/", {
       method: "POST",
@@ -96,19 +88,16 @@ export default function HomeScreen() {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.resultCode == 200) {
-          setcat(data.data);
-          console.log(`cat: ${data.data}`);
-        }
+        if (data.resultCode === 200) setCat(data.data);
       })
-      .catch((err) => console.log(err));
+      .catch(console.error);
 
     fetch("https://api.exchangerate-api.com/v4/latest/USD")
       .then((res) => res.json())
       .then((data) => {
         setUsdRate(`USD rate: ${data.rates.MNT}₮`);
       })
-      .catch((err) => console.log(err));
+      .catch(console.error);
 
     startScrolling();
   }, []);
@@ -120,9 +109,7 @@ export default function HomeScreen() {
       duration: 12000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(() => {
-      startScrolling();
-    });
+    }).start(startScrolling);
   };
 
   const handleRatingChange = (itemId, newRating) => {
@@ -138,6 +125,31 @@ export default function HomeScreen() {
     setItems(updatedItems);
   };
 
+  const toggleProfilePanel = () => {
+  const toValue = isProfileOpen ? width : width * 0.3;
+  setProfileOpen(!isProfileOpen);
+
+  Animated.parallel([
+    Animated.timing(profilePanelAnim, {
+      toValue,
+      duration: 400,
+      useNativeDriver: false,
+      easing: Easing.out(Easing.poly(4)),
+    }),
+    Animated.timing(panelOpacity, {
+      toValue: isProfileOpen ? 0 : 1,
+      duration: 400,
+      useNativeDriver: true,
+    }),
+  ]).start();
+};
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    setToken(null);
+    router.push("/");
+  };
+
   return (
     <ImageBackground
       source={{
@@ -147,70 +159,82 @@ export default function HomeScreen() {
       resizeMode="cover"
     >
       <LinearGradient colors={["#9b59b6", "#e056fd"]} style={styles.header}>
-          <ImageBackground
-            source={{
-              uri: "https://i.pinimg.com/736x/56/8a/1e/568a1e3f59ef753f658dfd7f6194c798.jpg",
-            }}
-            style={StyleSheet.absoluteFill}
-            imageStyle={{ opacity: 0 }}
-          />
-          <View style={styles.headerLeftContainer} />
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>SodoNews</Text>
-            <Text style={styles.infoText}>{usdRate}</Text>
-          </View>
-          <View style={styles.headerRightContainer}>
-            {token == null ? (
-              <View style={styles.headerButtons}>
-                <TouchableOpacity
-                  onPress={() => router.push("../LoginScreen")}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>Нэвтрэх</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => router.push("../RegisterScreen")}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>Бүртгүүлэх</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.headerButtons}>
-                {/* Add News */}
-                <TouchableOpacity
-                  onPress={() => router.push("../add_news")}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>Мэдээ нэмэх</Text>
-                </TouchableOpacity>
+        <View style={styles.headerLeftContainer} />
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.headerText}>SodoNews</Text>
+          <Text style={styles.infoText}>{usdRate}</Text>
+        </View>
+        <View style={styles.headerRightContainer}>
+          {token == null ? (
+            <>
+              <TouchableOpacity
+                onPress={() => router.push("../LoginScreen")}
+                style={styles.headerButton}
+              >
+                <Text style={styles.headerButtonText}>Нэвтрэх</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("../RegisterScreen")}
+                style={styles.headerButton}
+              >
+                <Text style={styles.headerButtonText}>Бүртгүүлэх</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity
+                onPress={() => router.push("../add_news")}
+                style={styles.headerButton}
+              >
+                <Text style={styles.headerButtonText}>Мэдээ нэмэх</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleLogout}
+                style={styles.headerButton}
+              >
+                <Text style={styles.headerButtonText}>Гарах</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={toggleProfilePanel}>
+                <Ionicons name="person-circle-outline" size={32} color="white" />
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </LinearGradient>
 
-                {/* Search */}
-                {/* <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/SearchScreen")}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>Хайх</Text>
-                </TouchableOpacity> */}
-
-                {/* Logout */}
-                <TouchableOpacity
-                  onPress={() => {
-                    setToken(null);
-                    localStorage.removeItem("token");
-                    router.push("/");
-                  }}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>Гарах</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </LinearGradient>
+      <Animated.View
+  style={[
+    styles.profilePanel,
+    {
+      right: profilePanelAnim,
+      opacity: panelOpacity,
+      shadowColor: "#000",
+      shadowOffset: { width: -4, height: 0 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 10,
+    },
+  ]}
+>
+  <View style={styles.profileContent}>
+    <View style={styles.profileHeader}>
+      <Image
+        source={{
+          uri: "https://i.pinimg.com/originals/98/a7/6a/98a76a7097ebaa46044ca332e1db1c6d.gif",
+        }}
+        style={styles.avatar}
+      />
+      <Text style={styles.profileTitle}>Сайн байна уу</Text>
+    </View>
+    <Text style={styles.profileItem}>👤 Нэр: Хэрэглэгч</Text>
+    <Text style={styles.profileItem}>📧 И-мэйл: user@example.com</Text>
+    <TouchableOpacity style={styles.closeButton} onPress={toggleProfilePanel}>
+      <Text style={styles.closeButtonText}>✖ Хаах</Text>
+    </TouchableOpacity>
+  </View>
+</Animated.View>
 
       <ScrollView style={styles.container}>
-        
         <View style={styles.adContainer}>
           <Animated.View
             style={[styles.adContent, { transform: [{ translateX }] }]}
@@ -227,16 +251,16 @@ export default function HomeScreen() {
           keyExtractor={(item, index) => index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 10 }}
+          contentContainerStyle={{ paddingHorizontal: 10 }}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => {
+              onPress={() =>
                 router.push({
                   pathname: "/detail/[id]",
                   params: { id: item.nid },
-                });
-              }}
+                })
+              }
             >
               <ImageBackground
                 source={{
@@ -273,7 +297,6 @@ export default function HomeScreen() {
             </TouchableOpacity>
           )}
         />
-
         <Text style={styles.sectionTitle}>Урлаг соёл</Text>
 
         <FlatList
@@ -757,39 +780,12 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // headerButtons: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   gap: 10, // эсвэл margin ашиглаж болно
-  // },
-  // headerButton: {
-  //   backgroundColor: "#007bff",
-  //   padding: 10,
-  //   borderRadius: 5,
-  // },
-  // headerButtonText: {
-  //   color: "white",
-  //   fontWeight: "bold",
-  // },
-
-  container: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  sidePanel: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    width: "70%",
-    backgroundColor: "transparent",
-    zIndex: 999,
-  },
+  container: { flex: 1, backgroundColor: "transparent" },
   header: {
     padding: 20,
     paddingTop: 50,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    elevation: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -803,26 +799,17 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   infoText: { color: "#e0e0e0", marginTop: 4, fontSize: 13 },
-  headerRightContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  headerButtons: { flexDirection: "row", gap: 8 },
+  headerRightContainer: { flexDirection: "column", alignItems: "center", gap: 8 },
   headerButton: {
     backgroundColor: "#ffffff33",
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 20,
-    minWidth: 100,
-    height: 36,
-    justifyContent: "center",
-    alignItems: "center",
+    
   },
   headerButtonText: { color: "#fff", fontWeight: "bold", fontSize: 14 },
   adContainer: {
     height: 60,
-    backgroundColor: "transparent",
     justifyContent: "center",
     marginTop: 10,
     overflow: "hidden",
@@ -831,24 +818,20 @@ const styles = StyleSheet.create({
   adContent: {
     flexDirection: "row",
     alignItems: "center",
-    //backgroundColor: "rgba(255, 255, 255, 0.4)",
-    borderRadius: 14,
     paddingHorizontal: 12,
-    paddingVertical: 6,
   },
-  adImage: {
-    width: 45,
-    height: 45,
-    marginRight: 10,
-    borderRadius: 8,
-  },
+  adImage: { width: 45, height: 45, marginRight: 10, borderRadius: 8 },
   adText: {
     fontSize: 15,
     fontWeight: "bold",
     color: "#222",
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    marginLeft: 14,
+    marginTop: 20,
   },
   card: {
     backgroundColor: "#fff",
@@ -856,14 +839,15 @@ const styles = StyleSheet.create({
     marginRight: 16,
     width: 260,
     elevation: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
   },
   cardImage: {
     width: "100%",
     height: 150,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
@@ -881,22 +865,40 @@ const styles = StyleSheet.create({
     color: "#f1c40f",
     marginTop: 6,
   },
-
   starContainer: { flexDirection: "row", marginTop: 6, gap: 4 },
   filledStar: { color: "#f1c40f", fontSize: 18 },
   emptyStar: { color: "#ccc", fontSize: 18 },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
-    marginLeft: 14,
+  profilePanel: {
+  position: "absolute",
+  top: 0,
+  bottom: 0,
+  width: "70%",
+  zIndex: 999,
+  padding: 20,
+  borderTopLeftRadius: 24,
+  borderBottomLeftRadius: 24,
+  backdropFilter: "blur(10px)", // iOS only; Android дэмжихгүй
+},
+profileHeader: {
+  alignItems: "center",
+  marginBottom: 20,
+},
+avatar: {
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+  marginBottom: 10,
+  borderWidth: 2,
+  borderColor: "#9b59b6",
+},
+  profileContent: { flex: 1 },
+  profileTitle: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  profileItem: { fontSize: 16, marginBottom: 10 },
+  closeButton: {
     marginTop: 20,
-    marginBottom: 8,
-    textDecorationLine: "none",
+    backgroundColor: "#9b59b6",
+    padding: 10,
+    borderRadius: 10,
   },
-  imageOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
+  closeButtonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
 });
