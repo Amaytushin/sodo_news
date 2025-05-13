@@ -277,7 +277,7 @@ def search_news(request):
     try:
         with connectDB() as conn:
             cur = conn.cursor()
-            query = '''select news_title, content, huraangvi  from t_amay_news'''
+            query = '''SELECT nid, news_title, content, huraangvi FROM t_amay_news'''
             cur.execute(query)
             columns = cur.description
             rest = [{columns[index][0]: column
