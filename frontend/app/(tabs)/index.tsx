@@ -23,8 +23,8 @@ const { width } = Dimensions.get("window");
 
 const ad = {
   id: 1,
-  image: "https://media.tenor.com/ZZFQEc-67xYAAAAM/surprised-sorprendido.gif",
-  text: "🎉 Emart цочир хямдрал 9999₮ 🎉",
+  image: "https://pa1.narvii.com/6328/88107ddc2df7a4c4d0f6fa5d92975b4cabc79673_hq.gif",
+  text: "Тэнгисийн эргийн охид залуучууд хоорондоо секс хийдэг үү? ",
 };
 
 const StarRating = ({ rating, onRatingChange }) => {
@@ -252,7 +252,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -300,7 +305,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -348,7 +358,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -396,7 +411,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -444,7 +464,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -492,7 +517,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -540,7 +570,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -588,7 +623,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -636,7 +676,12 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onPress={() => router.push(`/NewsDetailScreen?id=${item.id}`)}
+              onPress={() => {
+                router.push({
+                  pathname: "/detail/[id]",
+                  params: { id: item.nid },
+                });
+              }}
             >
               <ImageBackground
                 source={{
@@ -738,7 +783,7 @@ const styles = StyleSheet.create({
   adContent: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    //backgroundColor: "rgba(255, 255, 255, 0.4)",
     borderRadius: 14,
     paddingHorizontal: 12,
     paddingVertical: 6,
