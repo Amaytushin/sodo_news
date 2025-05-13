@@ -79,8 +79,8 @@ def checkService(request):
             elif data['action'] == 'login':
                 res = login(request)
                 return JsonResponse(res)
-            elif data['action'] == 'search':
-                res = search(request)
+            elif data['action'] == 'search_news':
+                res = search_news(request)
                 return JsonResponse(res)
             elif data['action'] == 'getnews':
                 res = getnews(request)
@@ -164,7 +164,7 @@ def login(request):
             if not check_password(password, data[0]):
                 res = sendResponse(4007)
                 return res
-            
+
             resJson = {
                 'nid': data[2],
                 'author_name': data[1],
@@ -270,44 +270,22 @@ def getcategory(request):
         return sendResponse(5000)
 
 
-def search(request):
-    query = request.GET.get('q', '').strip()
-    
-    if not query:
-        return JsonResponse(sendResponse(4009, action="search"))
-
-    like_query = f"%{query}%"
+def search_news(request):
+    jsons = json.loads(request.body)
+    action = jsons['action']
 
     try:
         with connectDB() as conn:
             cur = conn.cursor()
-            qu = '''
-                SELECT n.nid, news_title, n.content, huraangvi, published_at, 
-                       c.cat_id, c.category_name, image_url
-                FROM t_amay_news n
-                LEFT JOIN t_amay_news_category c ON n.category_id = c.cat_id
-                WHERE news_title LIKE %s OR n.content LIKE %s;
-            '''
-            cur.execute(qu, [like_query, like_query])
-            rows = cur.fetchall()
+            query = '''select news_title, content, huraangvi  from t_amay_news'''
+            cur.execute(query)
+            columns = cur.description
+            rest = [{columns[index][0]: column
+                     for index, column in enumerate(value)} for value in cur.fetchall()]
+
+            resp = sendResponse(action=action, data=rest, resultCode=200)
+            return resp
+
     except Exception as e:
-        # optionally: log error `e`
-        return JsonResponse(sendResponse(4005, action="search"))
-
-    results = [
-        {
-            'id': row[0],
-            'title': row[1],
-            'content': row[2],
-            'summary': row[3],
-            'published_at': row[4],
-            'category_id': row[5],
-            'category_name': row[6],
-            'image_url': row[7],
-        }
-        for row in rows
-    ]
-
-    return JsonResponse(sendResponse(200, action="search", data=results))
-
-
+        print(f"############################ {e}")
+        return sendResponse(5000)
