@@ -10,9 +10,10 @@ import {
   Animated,
   Easing,
   View,
+  ImageBackground,
 } from "react-native";
 import {
-  TextInput,
+  TextInput as PaperTextInput,
   Button,
   Text,
   Provider as PaperProvider,
@@ -21,6 +22,8 @@ import {
   MD3DarkTheme,
 } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+
+const AnimatedTextInput = Animated.createAnimatedComponent(PaperTextInput);
 
 export default function HomeScreen() {
   const [title, setTitle] = useState("");
@@ -34,9 +37,7 @@ export default function HomeScreen() {
   const [isNightMode, setIsNightMode] = useState(false);
   const [hadgalah, setHadgalah] = useState(false);
 
-  // Animated value for smooth transition
   const animatedValue = useRef(new Animated.Value(0)).current;
-
   const theme = isNightMode ? MD3DarkTheme : DefaultTheme;
 
   const pickFile = async () => {
@@ -105,31 +106,34 @@ export default function HomeScreen() {
     }
   };
 
-  // Toggle theme with smooth transition
   const toggleTheme = () => {
     setIsNightMode(!isNightMode);
+  };
 
+  useEffect(() => {
     Animated.timing(animatedValue, {
-      toValue: isNightMode ? 0 : 1,
+      toValue: isNightMode ? 1 : 0,
       duration: 600,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
-  };
+  }, [isNightMode]);
 
   const interpolatedBackgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["#ffffff", "#121212"],
+    outputRange: ["#f8f9fa", "#121212"],
   });
-
   const interpolatedTextColor = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["#333333", "#e0e0e0"], // Softer text color for night mode
+    outputRange: ["#1c1c1c", "#e0e0e0"],
   });
-
+  const interpolatedInputBackgroundColor = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#ffffff", "#1e1e1e"],
+  });
   const interpolatedButtonColor = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["#9b59b6", "#8e44ad"],
+    outputRange: ["#9b59b6", "#e056fd"],
   });
 
   return (
@@ -138,148 +142,138 @@ export default function HomeScreen() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
-        <Animated.View
-          style={[
-            styles.animatedContainer,
-            { backgroundColor: interpolatedBackgroundColor },
-          ]}
+        <ImageBackground
+          source={{
+            uri: "https://i.pinimg.com/736x/e5/50/f4/e550f43df6534b6132b77c8e9f0ca585.jpg",
+          }}
+          style={{ flex: 1 }}
+          resizeMode="cover"
         >
-          <ScrollView contentContainerStyle={styles.container}>
-            {/* Title */}
-            <TextInput
-              label="Гарчиг"
-              value={title}
-              onChangeText={setTitle}
-              style={[styles.input, { color: interpolatedTextColor }]}
-              mode="outlined"
-            />
-
-            {/* Хураангуй */}
-            <TextInput
-              label="Хураангуй"
-              value={huraangvi}
-              onChangeText={setHuraangvi}
-              style={[styles.input, { color: interpolatedTextColor }]}
-              mode="outlined"
-            />
-
-            {/* Агуулга */}
-            <TextInput
-              label="Агуулга"
-              value={content}
-              onChangeText={setContent}
-              style={[styles.input, { color: interpolatedTextColor }]}
-              multiline
-              numberOfLines={5}
-              mode="outlined"
-            />
-
-            {/* Категори сонгох */}
-            <Menu
-              visible={menuVisible}
-              onDismiss={() => setMenuVisible(false)}
-              anchor={
-                <TouchableOpacity onPress={() => setMenuVisible(true)}>
-                  <TextInput
-                    label="Төрөл сонгох"
-                    value={categoryName.catname || ""}
-                    style={[styles.input, { color: interpolatedTextColor }]}
-                    mode="outlined"
-                    editable={false}
-                    pointerEvents="none"
-                  />
-                </TouchableOpacity>
-              }
-            >
-              {catArray.map((cat) => (
-                <Menu.Item
-                  key={cat.cat_id}
-                  onPress={() => {
-                    setCategoryName({
-                      catid: cat.cat_id,
-                      catname: cat.category_name,
-                    });
-                    setMenuVisible(false);
+          <Animated.View
+            style={[styles.animatedContainer, { backgroundColor: interpolatedBackgroundColor, opacity: 0.93 }]}
+          >
+            <ScrollView contentContainerStyle={styles.container}>
+              {[{
+                label: "Гарчиг",
+                value: title,
+                onChange: setTitle,
+              }, {
+                label: "Хураангуй",
+                value: huraangvi,
+                onChange: setHuraangvi,
+              }, {
+                label: "Агуулга",
+                value: content,
+                onChange: setContent,
+                multiline: true,
+                numberOfLines: 5,
+              }].map((item, index) => (
+                <AnimatedTextInput
+                  key={index}
+                  label={item.label}
+                  value={item.value}
+                  onChangeText={item.onChange}
+                  mode="outlined"
+                  multiline={item.multiline}
+                  numberOfLines={item.numberOfLines}
+                  style={[styles.input, {
+                    backgroundColor: interpolatedInputBackgroundColor,
+                    color: interpolatedTextColor,
+                  }]}
+                  theme={{
+                    colors: {
+                      text: isNightMode ? "#f5f5f5" : "#000000",
+                      placeholder: isNightMode ? "#aaaaaa" : "#666666",
+                    },
                   }}
-                  title={cat.category_name}
                 />
               ))}
-            </Menu>
 
-            {/* Зураг сонгох */}
-            <LinearGradient
-              colors={["#9b59b6", "#e056fd"]}
-              style={styles.gradientButton}
-            >
-              <Button
-                icon="image"
-                mode="contained"
-                onPress={pickFile}
-                textColor="#fff"
-                style={{ backgroundColor: "transparent" }}
+              <Menu
+                visible={menuVisible}
+                onDismiss={() => setMenuVisible(false)}
+                anchor={
+                  <TouchableOpacity onPress={() => setMenuVisible(true)}>
+                    <AnimatedTextInput
+                      label="Төрөл сонгох"
+                      value={categoryName.catname || ""}
+                      mode="outlined"
+                      editable={false}
+                      pointerEvents="none"
+                      style={[styles.input, {
+                        backgroundColor: interpolatedInputBackgroundColor,
+                        color: interpolatedTextColor,
+                      }]}
+                      theme={{
+                        colors: {
+                          text: isNightMode ? "#f5f5f5" : "#000000",
+                          placeholder: isNightMode ? "#aaaaaa" : "#666666",
+                        },
+                      }}
+                    />
+                  </TouchableOpacity>
+                }
               >
-                Зураг сонгох
-              </Button>
-              <Text
-                style={{
-                  textAlign: "center",
-                  marginTop: 5,
-                  color: interpolatedTextColor,
-                }}
-              >
-                {file ? file.name : ""}
-              </Text>
-            </LinearGradient>
+                {catArray.map((cat) => (
+                  <Menu.Item
+                    key={cat.cat_id}
+                    onPress={() => {
+                      setCategoryName({
+                        catid: cat.cat_id,
+                        catname: cat.category_name,
+                      });
+                      setMenuVisible(false);
+                    }}
+                    title={cat.category_name}
+                  />
+                ))}
+              </Menu>
 
-            {/* Хадгалах */}
-            <LinearGradient
-              colors={["#9b59b6", "#e056fd"]}
-              style={styles.gradientButton}
-            >
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                textColor="#fff"
-                disabled={hadgalah}
-                style={{ backgroundColor: "transparent" }}
+              <LinearGradient
+                colors={["#9b59b6", "#e056fd"]}
+                style={[styles.gradientButton, { backgroundColor: interpolatedButtonColor }]}
               >
-                {hadgalah ? "Хадгалж байна..." : "Хадгалах"}
-              </Button>
-            </LinearGradient>
+                <Button
+                  icon="image"
+                  mode="contained"
+                  onPress={pickFile}
+                  textColor="#fff"
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  Зураг сонгох
+                </Button>
+              </LinearGradient>
+              {file && (
+                <Text style={[styles.fileNameText, { color: interpolatedTextColor }]}>{file.name}</Text>
+              )}
 
-            {/* Амжилттай мессеж */}
-            {successMessage ? (
-              <Text
-                style={{
-                  color: "#2ecc71", // Илүү тод ногоон
-                  marginTop: 10,
-                  textAlign: "center",
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  backgroundColor: "#ecf0f1", // Зөөлөн цайвар фон
-                  padding: 10,
-                  borderRadius: 10,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 3,
-                  elevation: 5, // Android дээр сүүдэр
-                }}
+              <LinearGradient
+                colors={["#9b59b6", "#e056fd"]}
+                style={[styles.gradientButton, { backgroundColor: interpolatedButtonColor }]}
               >
-                {successMessage}
-              </Text>
-            ) : null}
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit}
+                  textColor="#fff"
+                  disabled={hadgalah}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  {hadgalah ? "Хадгалж байна..." : "Хадгалах"}
+                </Button>
+              </LinearGradient>
 
-            {/* Night Mode Toggle */}
-            <TouchableOpacity onPress={toggleTheme} style={styles.toggleButton}>
-              <Animated.Text
-                style={[styles.toggleText, { color: interpolatedTextColor }]}
-              >
-                {isNightMode ? "🌙" : "🌞"}
-              </Animated.Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Animated.View>
+              {successMessage ? (
+                <Text style={styles.successMessage}>{successMessage}</Text>
+              ) : null}
+
+              <TouchableOpacity onPress={toggleTheme} style={styles.toggleButton}>
+                <Animated.Text style={[styles.toggleText, { color: interpolatedTextColor }]}> 
+                  {isNightMode ? "🌙" : "🌞"}
+                </Animated.Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </Animated.View>
+        </ImageBackground>
       </KeyboardAvoidingView>
     </PaperProvider>
   );
@@ -288,54 +282,76 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   animatedContainer: {
     flex: 1,
-    backgroundColor: "#f8f9fa", // Цэвэр цайвар өнгө, dark mode-д автоматаар солих боломжтой
+    backgroundColor: '#f1f3f6',
   },
   container: {
+    flex: 1,
     padding: 20,
-    paddingBottom: 60,
+    paddingBottom: 80,
+    borderRadius: 20,
+    margin: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 5,
   },
   input: {
-    marginBottom: 16,
-    //backgroundColor: "#ffffffcc", // translucent white
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#dee2e6",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    marginBottom: 40,
+    borderRadius: 16,
+    fontSize: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
     elevation: 2,
   },
   gradientButton: {
-    borderRadius: 12,
-    overflow: "hidden",
-    marginTop: 18,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginTop: 24,
     padding: 2,
-    shadowColor: "#9b59b6",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
+    elevation: 6,
+    shadowColor: '#9b59b6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+  },
+  fileNameText: {
+    textAlign: 'center',
+    marginTop: 12,
+    fontSize: 15,
+    fontStyle: 'italic',
+  },
+  successMessage: {
+    color: '#27ae60',
+    backgroundColor: 'rgba(39, 174, 96, 0.15)',
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    padding: 12,
+    borderRadius: 12,
+    borderColor: '#27ae60',
+    borderWidth: 1,
+  },
+  toggleButton: {
+    marginTop: 40,
+    alignSelf: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    //backgroundColor: '#ecf0f1',
+    borderRadius: 30,
+    shadowColor: '#bdc3c7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 4,
   },
-  toggleButton: {
-    marginTop: 35,
-    alignSelf: "center",
-    //backgroundColor: "#ffffff88", // translucent toggle bg
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    elevation: 0,
-  },
   toggleText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#6c5ce7",
+    fontSize: 22,
+    fontWeight: '700',
   },
 });
