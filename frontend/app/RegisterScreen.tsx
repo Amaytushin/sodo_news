@@ -17,12 +17,17 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [repassword, setrePassword] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // Success message state
+  const [loading, setLoading] = useState(false);
+ 
+
 
   const handleRegister = () => {
     if (repassword !== password) {
       alert("Нууц үг таарахгүй байна");
       return;
     }
+
+    setLoading(true);
 
     const form = {
       action: "register",
@@ -43,12 +48,22 @@ export default function RegisterScreen() {
         setEmail("");
         setPassword("");
         setrePassword("");
+        const timeout = setTimeout(() => {
+          setSuccessMessage("");
+          
+        }, 3000);
 
         console.log(data);
         // if (data.resultCode === 200) {
         // }
       })
-      .catch((error) => console.error("Алдаа гарлаа:", error));
+      .catch((error) => {
+        console.error("Алдаа гарлаа:", error);
+        alert("Бүртгэх явцад алдаа гарлаа");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -101,17 +116,22 @@ export default function RegisterScreen() {
         </LinearGradient>
       </TouchableOpacity>
 
+      {/*loading*/}
+      {loading && (
+        <Text style={styles.loadingMessage}>Бүртгэж байна.......</Text>
+      )}
+
       {/* Success message */}
       {successMessage ? (
         <Text style={styles.successMessage}>{successMessage}</Text> // Display success message
       ) : null}
 
       {/* Login холбоос */}
-      <TouchableOpacity onPress={() => router.push("/(tabs)/LoginScreen")}>
+      <TouchableOpacity onPress={() => router.push("/LoginScreen")}>
         <Text style={styles.registerText}>Нэвтрэх</Text>
       </TouchableOpacity>
     </View>
-  );  
+  );
 }
 
 const styles = StyleSheet.create({
@@ -168,6 +188,11 @@ const styles = StyleSheet.create({
     color: "green",
     fontSize: 16,
     fontWeight: "bold",
+    marginTop: 10,
+  },
+  loadingMessage: {
+    color: "#555",
+    fontSize: 16,
     marginTop: 10,
   },
 });

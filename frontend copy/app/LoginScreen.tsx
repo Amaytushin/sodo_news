@@ -18,8 +18,9 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [medee, setMedee] = useState("");
 
+  
   const handleLogin = async () => {
-    console.log("data");
+      console.log('data')
 
     const form = {
       action: "login",
@@ -37,12 +38,12 @@ export default function LoginScreen() {
       });
 
       const data = await res.json(); // response-ийг json болгож хөрвүүлэх
-      console.log(data);
+      console.log(data)
       if (data.resultCode === 200) {
         const email = data.action[0].email;
         if (email) {
           localStorage.setItem("email", email);
-          alert("amjiltta");
+          alert('amjiltta')
           router.push("/(tabs)");
         }
         await AsyncStorage.setItem("token", "бүртгэлтэй"); // await ашиглан token хадгална
@@ -95,11 +96,12 @@ export default function LoginScreen() {
 
       {/* Login товч */}
       <TouchableOpacity
-        onPress={() => {
-          handleLogin(); // ← () нэмэх шаардлагатай
-        }}
-        style={styles.buttonContainer}
-      >
+  onPress={() => {
+    handleLogin(); // ← () нэмэх шаардлагатай
+  }}
+  style={styles.buttonContainer}
+>
+
         <LinearGradient
           colors={["#9b59b6", "#e056fd"]}
           style={styles.button}

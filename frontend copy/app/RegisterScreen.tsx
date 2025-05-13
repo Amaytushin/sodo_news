@@ -9,51 +9,46 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
-import { router, useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [medee, setMedee] = useState("");
+  const [repassword, setrePassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // Success message state
 
-  const handleLogin = async () => {
-    console.log("data");
+  const handleRegister = () => {
+    if (repassword !== password) {
+      alert("Нууц үг таарахгүй байна");
+      return;
+    }
 
     const form = {
-      action: "login",
+      action: "register",
       email: email,
       password: password,
     };
 
-    try {
-      const res = await fetch("http://127.0.0.1:8000/user/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+    fetch("http://127.0.0.1:8000/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSuccessMessage("Амжилттай бүртгэгдлээ!"); // Show success message
+        setEmail("");
+        setPassword("");
+        setrePassword("");
 
-      const data = await res.json(); // response-ийг json болгож хөрвүүлэх
-      console.log(data);
-      if (data.resultCode === 200) {
-        const email = data.action[0].email;
-        if (email) {
-          localStorage.setItem("email", email);
-          alert("amjiltta");
-          router.push("/(tabs)");
-        }
-        await AsyncStorage.setItem("token", "бүртгэлтэй"); // await ашиглан token хадгална
-        router.replace("/"); // Шилжих
-      } else {
         console.log(data);
-        return;
-      }
-    } catch (error) {
-      console.error("Алдаа гарлаа:", error); // Алдааг барих
-    }
+        // if (data.resultCode === 200) {
+        // }
+      })
+      .catch((error) => console.error("Алдаа гарлаа:", error));
   };
 
   return (
@@ -84,38 +79,39 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
         />
+        <TextInput
+          style={styles.input}
+          placeholder="Нууц үг давтах"
+          placeholderTextColor="#999"
+          secureTextEntry
+          value={repassword}
+          onChangeText={setrePassword}
+        />
       </View>
 
-      {/* Forgot password */}
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity>
-          <Text style={styles.optionText}>Нууц үг мартсан?</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Login товч */}
-      <TouchableOpacity
-        onPress={() => {
-          handleLogin(); // ← () нэмэх шаардлагатай
-        }}
-        style={styles.buttonContainer}
-      >
+      {/* Register товч */}
+      <TouchableOpacity onPress={handleRegister} style={styles.buttonContainer}>
         <LinearGradient
           colors={["#9b59b6", "#e056fd"]}
           style={styles.button}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
         >
-          <Text style={styles.buttonText}>Нэвтрэх</Text>
+          <Text style={styles.buttonText}>Бүртгүүлэх</Text>
         </LinearGradient>
       </TouchableOpacity>
 
-      {/* Register холбоос */}
-      <TouchableOpacity onPress={() => router.push("/RegisterScreen")}>
-        <Text style={styles.registerText}>Бүртгүүлэх</Text>
+      {/* Success message */}
+      {successMessage ? (
+        <Text style={styles.successMessage}>{successMessage}</Text> // Display success message
+      ) : null}
+
+      {/* Login холбоос */}
+      <TouchableOpacity onPress={() => router.push("/(tabs)/LoginScreen")}>
+        <Text style={styles.registerText}>Нэвтрэх</Text>
       </TouchableOpacity>
     </View>
-  );
+  );  
 }
 
 const styles = StyleSheet.create({
@@ -135,25 +131,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
   },
-  logo: {
-    width: 60,
-    height: 60,
-    backgroundColor: "#9b59b6",
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoText: {
-    color: "#fff",
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-  title: {
-    marginTop: 10,
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#5d3fd3",
-  },
   inputContainer: {
     width: "100%",
   },
@@ -166,15 +143,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderColor: "#ccc",
     borderWidth: 1,
-  },
-  optionsContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "100%",
-    marginBottom: 20,
-  },
-  optionText: {
-    color: "#555",
   },
   buttonContainer: {
     width: "100%",
@@ -195,5 +163,11 @@ const styles = StyleSheet.create({
     color: "#5d3fd3",
     marginTop: 10,
     fontSize: 16,
+  },
+  successMessage: {
+    color: "green",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
   },
 });

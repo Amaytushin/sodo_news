@@ -84,6 +84,7 @@ export default function HomeScreen() {
       .then((res) => res.json())
       .then((data) => {
         if (data.resultCode === 200) {
+          console.log(`#############${JSON.stringify(data)}`);
           setItems(data.data);
         }
       })
@@ -180,7 +181,7 @@ export default function HomeScreen() {
               <View style={styles.headerButtons}>
                 {/* Add News */}
                 <TouchableOpacity
-                  onPress={() => router.push("../add_news")}
+                  onPress={() => router.push("/(tabs)/explore")}
                   style={styles.headerButton}
                 >
                   <Text style={styles.headerButtonText}>Мэдээ нэмэх</Text>
@@ -445,7 +446,7 @@ export default function HomeScreen() {
               style={styles.card}
               onPress={() => {
                 router.push({
-                  pathname: "../detail/[id]",
+                  pathname: "/detail/[id]",
                   params: { id: item.nid },
                 });
               }}

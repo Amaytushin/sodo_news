@@ -244,7 +244,7 @@ def getnews(request):
             return resp
 
     except Exception as e:
-        # print(f"############################ {e}")
+        print(f"############################ {e}")
         return sendResponse(5000)
 
 
