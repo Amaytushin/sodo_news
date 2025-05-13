@@ -17,7 +17,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "@react-native-community/blur";
@@ -56,14 +56,14 @@ export default function HomeScreen() {
   const [usdRate, setUsdRate] = useState("Loading...");
   const [token, setToken] = useState<string | null>(null);
   const translateX = useRef(new Animated.Value(width)).current;
-  const router = useRouter();
+  
   const [email, setEmail] = useState<string | null>(null);
   useEffect(() => {
-    const storedEmail = localStorage.getItem("email");
-    if (storedEmail) {
-      setEmail(storedEmail);
-    }
-  }, []);
+  const storedEmail = localStorage.getItem("email");
+  if (storedEmail) {
+    setEmail(storedEmail);
+  }
+}, []);
   // Хоёр panel-ийн төлөв
   const searchPanelAnim = useRef(new Animated.Value(-width)).current;
   const profilePanelAnim = useRef(new Animated.Value(width)).current;
@@ -193,14 +193,23 @@ export default function HomeScreen() {
           { transform: [{ translateX: searchPanelAnim }] },
         ]}
       >
+
         <ImageBackground
           source={{
             uri: "https://i.pinimg.com/736x/dd/d9/c6/ddd9c66350a75ebab6a587c09592d4e4.jpg",
           }}
           style={styles.sidePanelBackground}
-        >
+          >
           <Text style={styles.searchHeader}>🔍 Хайлт</Text>
           <TextInput placeholder="Мэдээ хайх..." style={styles.searchInput} />
+
+
+
+
+
+
+
+
 
           <TouchableOpacity onPress={closeAllPanels} style={styles.closeButton}>
             <Ionicons name="close" size={24} color="black" />
@@ -238,9 +247,7 @@ export default function HomeScreen() {
                 }}
                 style={styles.avatar}
               />
-              <Text style={styles.profileName}>
-                Email: {email || "Хэрэглэгч алга"}{" "}
-              </Text>
+              <Text style={styles.profileName}>Email: {email || "Хэрэглэгч алга"} </Text>
               {/* <Text style={styles.profileEmail}>
                 Email: amay_iin_ireeduin_ehner@gmail.com
               </Text> */}
@@ -868,16 +875,16 @@ const styles = StyleSheet.create({
     letterSpacing: 1, // Үсгийн хооронд нэмэлт зай нэмэх
     textTransform: "uppercase", // Бүх үсгийг томруулах
     fontFamily: "Poppins", // Modern, сүүлийн үеийн шрифт
-    lineHeight: 40, // Хажуугийн зайг нэмэх
-    textAlign: "left", // Төвлөрсөн байрлал, илүү тодорхой
+    lineHeight: 36, // Хажуугийн зайг нэмэх
+    textAlign: "center", // Төвлөрсөн байрлал, илүү тодорхой
     paddingRight: 18, // Баруун тийш бага зэрэг зай нэмэх
-    //backgroundColor: "#8e44ad", // Илүү тод харагдах өнгө
+    backgroundColor: "#8e44ad", // Илүү тод харагдах өнгө
     paddingVertical: 12, // Дээд ба доод зайг нэмэх
     borderRadius: 8, // Дугуйт булан үүсгэх
     shadowColor: "#2c3e50", // Бараан сүүдэр нэмэх
     shadowOffset: { width: 0, height: 4 }, // Сүүдрийн байрлалыг тохируулах
-    shadowOpacity: 0, // Сүүдрийн тодрол
-    shadowRadius: 0, // Сүүдрийн хэмжээ
+    shadowOpacity: 0.25, // Сүүдрийн тодрол
+    shadowRadius: 3.5, // Сүүдрийн хэмжээ
   },
   card: {
     backgroundColor: "#fff",

@@ -56,7 +56,7 @@ export default function RegisterScreen() {
       {/* Logo хэсэг */}
       <View style={styles.logoContainer}>
         <Image
-          source={require("../../assets/images/sodonews2.png")}
+          source={require("../assets/images/sodonews2.png")}
           style={styles.logoImage}
           resizeMode="contain"
         />

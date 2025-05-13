@@ -18,12 +18,13 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AnimatedView } from "react-native-reanimated/lib/typescript/component/View";
 
-import { useRouter } from "expo-router";
+import { useRouter, usePathname } from "expo-router";
 const { width } = Dimensions.get("window");
 
 const ad = {
   id: 1,
-  image: "https://pa1.narvii.com/6328/88107ddc2df7a4c4d0f6fa5d92975b4cabc79673_hq.gif",
+  image:
+    "https://pa1.narvii.com/6328/88107ddc2df7a4c4d0f6fa5d92975b4cabc79673_hq.gif",
   text: "Тэнгисийн эргийн охид залуучууд хоорондоо секс хийдэг үү? ",
 };
 
@@ -50,6 +51,7 @@ const calculateAverageRating = (ratings) => {
 
 export default function HomeScreen() {
   const [items, setItems] = useState([]);
+  const pathName = usePathname();
   const [cat, setcat] = useState([]);
   const [usdRate, setUsdRate] = useState("Loading...");
   const translateX = useRef(new Animated.Value(width)).current;
@@ -64,15 +66,15 @@ export default function HomeScreen() {
   //   }
   // }
 
+  console.log(localStorage.getItem("token"));
   useEffect(() => {
     const fetchToken = async () => {
       const t = await AsyncStorage.getItem("token");
       setToken(t);
     };
     fetchToken();
-  }, []);
+  }, [pathName]);
 
-  
   useEffect(() => {
     fetch("http://127.0.0.1:8000/user/", {
       method: "POST",
@@ -82,6 +84,7 @@ export default function HomeScreen() {
       .then((res) => res.json())
       .then((data) => {
         if (data.resultCode === 200) {
+          console.log(`#############${JSON.stringify(data)}`)
           setItems(data.data);
         }
       })
@@ -159,7 +162,7 @@ export default function HomeScreen() {
             <Text style={styles.infoText}>{usdRate}</Text>
           </View>
           <View style={styles.headerRightContainer}>
-            {token == null && (
+            {token == null ? (
               <View style={styles.headerButtons}>
                 <TouchableOpacity
                   onPress={() => router.push("/(tabs)/LoginScreen")}
@@ -172,6 +175,35 @@ export default function HomeScreen() {
                   style={styles.headerButton}
                 >
                   <Text style={styles.headerButtonText}>Бүртгүүлэх</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.headerButtons}>
+                {/* Add News */}
+                <TouchableOpacity
+                  onPress={() => router.push("/(tabs)/explore")}
+                  style={styles.headerButton}
+                >
+                  <Text style={styles.headerButtonText}>Мэдээ нэмэх</Text>
+                </TouchableOpacity>
+
+                {/* Search */}
+                {/* <TouchableOpacity
+                  onPress={() => router.push("/(tabs)/SearchScreen")}
+                  style={styles.headerButton}
+                >
+                  <Text style={styles.headerButtonText}>Хайх</Text>
+                </TouchableOpacity> */}
+
+                {/* Logout */}
+                <TouchableOpacity
+                  onPress={() => {
+                    setToken(null);
+                    router.push("/(tabs)/LoginScreen");
+                  }}
+                  style={styles.headerButton}
+                >
+                  <Text style={styles.headerButtonText}>Гарах</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -724,6 +756,21 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  // headerButtons: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   gap: 10, // эсвэл margin ашиглаж болно
+  // },
+  // headerButton: {
+  //   backgroundColor: "#007bff",
+  //   padding: 10,
+  //   borderRadius: 5,
+  // },
+  // headerButtonText: {
+  //   color: "white",
+  //   fontWeight: "bold",
+  // },
+
   container: {
     flex: 1,
     backgroundColor: "transparent",
@@ -833,6 +880,7 @@ const styles = StyleSheet.create({
     color: "#f1c40f",
     marginTop: 6,
   },
+
   starContainer: { flexDirection: "row", marginTop: 6, gap: 4 },
   filledStar: { color: "#f1c40f", fontSize: 18 },
   emptyStar: { color: "#ccc", fontSize: 18 },

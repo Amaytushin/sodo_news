@@ -8,22 +8,21 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import data from "../../app.json";
 import { Image } from "react-native";
 import { router, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-  export default function LoginScreen() {
-    const navigation = useNavigation();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [medee, setMedee] = useState("");
-    const handleLogin = async () => {
-      const form = {
-        action: "login",
-        email: email,
-        password: password,
-      };
+export default function LoginScreen() {
+  const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [medee, setMedee] = useState("");
+  const handleLogin = async () => {
+    const form = {
+      action: "login",
+      email: email,
+      password: password,
+    };
 
     try {
       const res = await fetch("http://127.0.0.1:8000/user/", {
@@ -41,7 +40,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
           localStorage.setItem("email", email);
         }
         await AsyncStorage.setItem("token", "бүртгэлтэй"); // await ашиглан token хадгална
-        router.replace("/(tabs)/explore"); // Шилжих
+        router.replace("/(tabs)/LoginiiDaraah "); // Шилжих
       } else {
         console.log(data);
         return;
@@ -56,7 +55,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
       {/* Logo хэсэг */}
       <View style={styles.logoContainer}>
         <Image
-          source={require("../../assets/images/sodonews2.png")}
+          source={require("../assets/images/sodonews2.png")}
           style={styles.logoImage}
           resizeMode="contain"
         />
@@ -89,7 +88,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
       </View>
 
       {/* Login товч */}
-      <TouchableOpacity onPress={handleLogin} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={ () => {
+        router.push("/(tabs)");
+        handleLogin}} style={styles.buttonContainer}>
         <LinearGradient
           colors={["#9b59b6", "#e056fd"]}
           style={styles.button}
