@@ -219,10 +219,10 @@ export default function HomeScreen() {
           </Animated.View>
         </View>
 
-        <Text style={styles.sectionTitle}>Улс төрийн мэдээ</Text>
+        <Text style={styles.sectionTitle}>Спорт</Text>
 
         <FlatList
-          data={items.filter((item) => item.cat_id === 1)}
+          data={items.filter((item) => item.cat_id === 5)}
           keyExtractor={(item, index) => index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -432,10 +432,10 @@ export default function HomeScreen() {
             </TouchableOpacity>
           )}
         />
-        <Text style={styles.sectionTitle}>Спорт</Text>
+        <Text style={styles.sectionTitle}>Улс төр</Text>
 
         <FlatList
-          data={items.filter((item) => item.cat_id === 5)}
+          data={items.filter((item) => item.cat_id === 1)}
           keyExtractor={(item, index) => index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
