@@ -23,7 +23,7 @@ const ad = {
   id: 1,
   image:
     "https://pa1.narvii.com/6328/88107ddc2df7a4c4d0f6fa5d92975b4cabc79673_hq.gif",
-  text: "Тэнгисийн эргийн охид залуучууд хоорондоо секс хийдэг үү?",
+  text: "",
 };
 
 const StarRating = ({ rating, onRatingChange }) => {
@@ -51,7 +51,9 @@ export default function HomeScreen() {
   const [items, setItems] = useState([]);
   const [cat, setCat] = useState([]);
   const [usdRate, setUsdRate] = useState("Loading...");
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [emailChecked, setEmailChecked] = useState<string | null>(null);
+  const [nameChecked, setNameChecked] = useState<string | null>(null);
   const [isProfileOpen, setProfileOpen] = useState(false);
   const translateX = useRef(new Animated.Value(width)).current;
   const profilePanelAnim = useRef(new Animated.Value(width)).current;
@@ -62,11 +64,18 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchToken = async () => {
       const t = await AsyncStorage.getItem("token");
-      setToken(t);
+      if (!!t) {
+        setToken(t);
+      }
+      const e = await AsyncStorage.getItem("email");
+      if (e) {
+        setEmailChecked(e);
+        const username = e.slice(0, e.indexOf("@"));
+        setNameChecked(username);
+      }
     };
     fetchToken();
   }, [pathName]);
-
   useEffect(() => {
     fetch("http://127.0.0.1:8000/user/", {
       method: "POST",
@@ -230,8 +239,11 @@ export default function HomeScreen() {
             />
             <Text style={styles.profileTitle}>Сайн байна уу</Text>
           </View>
-          <Text style={styles.profileItem}>👤 Нэр: Хэрэглэгч</Text>
-          <Text style={styles.profileItem}>📧 И-мэйл: user@example.com</Text>
+          <Text style={styles.profileItem}>👤 Нэр: {nameChecked || ""}</Text>
+          {/* <Text style={styles.profileItem}>📧 И-мэйл: user@example.com</Text> */}
+          <Text style={styles.profileItem}>
+            📧 И-мэйл: {emailChecked || ""}
+          </Text>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={toggleProfilePanel}
@@ -807,12 +819,12 @@ const styles = StyleSheet.create({
   },
   infoText: { color: "#e0e0e0", marginTop: 4, fontSize: 14 },
   headerRightContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
   headerButton: {
-    //backgroundColor: "#ffffff33",
+    backgroundColor: "#ffffff33",
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 20,

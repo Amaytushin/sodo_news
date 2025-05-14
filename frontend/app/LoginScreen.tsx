@@ -45,6 +45,7 @@ export default function LoginScreen() {
         if (email) {
           // localStorage → AsyncStorage
           await AsyncStorage.setItem("email", email);
+          
           Toast.show({
             type: "success",
             text1: "Амжилттай нэвтэрлээ",
